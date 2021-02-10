@@ -1,4 +1,3 @@
-from logging import error
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -11,6 +10,7 @@ import selenium.common.exceptions
 from typing_extensions import final
 chrome_options = Options()
 chrome_options.add_argument("--headless") #Comment this to run on UI
+chrome_options.add_argument('log-level=3')
 
 print("Initialize ...")
 driver = webdriver.Chrome(options=chrome_options, executable_path="/Users/nhannguyen/Documents/crawlerFB/chromedriver")
@@ -32,11 +32,10 @@ def write2file():
     
     csv_file = "/Users/nhannguyen/Documents/crawlerFB/out2.csv"
     try:
-        with open(csv_file, 'w') as csvfile:
+        with open(csv_file, 'w', encoding="utf-8", newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=keys)
             writer.writeheader()
-            for data in content:
-                writer.writerow(data)
+            writer.writerows(content)
     except IOError:
         print("I/O error")
 

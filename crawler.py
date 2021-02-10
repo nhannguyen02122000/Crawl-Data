@@ -1,4 +1,3 @@
-from logging import error
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
@@ -10,7 +9,7 @@ import selenium.common.exceptions
 import os
 chrome_options = Options()
 chrome_options.add_argument("--headless")
-
+chrome_options.add_argument('log-level=3')
 ################################################################
 ### INITIALIZE
 ################################################################
@@ -30,13 +29,12 @@ def write2file():
             if key not in keys:
                 keys.append(key)
     
-    csv_file = "/Users/nhannguyen/Documents/crawlerFB/out.csv"
+    csv_file = "/Users/nhannguyen/Documents/crawlerFB/out1.csv"
     try:
-        with open(csv_file, 'w') as csvfile:
+        with open(csv_file, 'w', encoding="utf-8", newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=keys)
             writer.writeheader()
-            for data in content:
-                writer.writerow(data)
+            writer.writerows(content)
     except IOError:
         print("I/O error")
 ################################################################
