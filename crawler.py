@@ -16,11 +16,13 @@ chrome_options.add_argument('log-level=3')
 ################################################################
 print("INITIALIZE ...")
 
-fromPage = int(sys.argv[1])
-toPage = int(sys.argv[2])
+f = open("/Users/nhannguyen/Documents/Crawl-Data/lastPage1.txt", "r")
+fromPage = int(f.read())+1
+amountToCrawl = int(sys.argv[1])
+toPage = fromPage + amountToCrawl
 url = "https://materialsforleed.ecomedes.com/?query="
 driver = webdriver.Chrome(
-            options=chrome_options, executable_path="/Users/nhannguyen/Documents/crawlerFB/chromedriver")
+            options=chrome_options, executable_path="/Users/nhannguyen/Documents/CRAWL-DATA/chromedriver")
 content = []
 errorMessage= ""
 
@@ -36,7 +38,7 @@ def write2file():
             if key not in keys:
                 keys.append(key)
     
-    csv_file = "/Users/nhannguyen/Documents/crawlerFB/out1_from"+str(fromPage)+"_to_"+str(toPage)+".csv"
+    csv_file = "/Users/nhannguyen/Documents/CRAWL-DATA/out1_from"+str(fromPage)+"_to_"+str(toPage)+".csv"
     try:
         with open(csv_file, 'w', encoding="utf-8", newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=keys)
@@ -128,11 +130,17 @@ def crawlFromPage():
 ################################################################
 print("GET LINK ...")
 driver.get(url)
-print("JUMP TO PAGE" + str(fromPage) +"...")
-for i in range(1,fromPage):
-    pages = len(driver.find_element_by_class_name('pagination').find_elements_by_tag_name('li'))
-    driver.find_element_by_class_name('pagination').find_elements_by_tag_name('li')[pages-1].find_element_by_tag_name('a').click()
-time.sleep(5)
+print("JUMP TO PAGE " + str(fromPage) +"...")
+if fromPage<556:
+    linkToPage = "https://materialsforleed.ecomedes.com/?page=" +str(fromPage-1)
+    driver.get(linkToPage)
+else:
+    linkToPage = "https://materialsforleed.ecomedes.com/?page=" +str(555-1)
+    driver.get(linkToPage)
+    for i in range(555,fromPage):
+        pages = len(driver.find_element_by_class_name('pagination').find_elements_by_tag_name('li'))
+        driver.find_element_by_class_name('pagination').find_elements_by_tag_name('li')[pages-1].find_element_by_tag_name('a').click()
+    time.sleep(60)
 print("!!! START CRAWLING !!!")
 #detect pagination
 for i in range(fromPage,toPage+1):
@@ -146,5 +154,9 @@ for i in range(fromPage,toPage+1):
     if len(content) != ((i-fromPage+1)*18):
         errorMessage += "Page "+ str(i) + " missing products!\n" 
     print("Crawled: " + str(len(content)) + " products")
+
+    f = open("/Users/nhannguyen/Documents/Crawl-Data/lastPage1.txt", "w")
+    f.write(str(i))
+    f.close()
 
 driver.close()
