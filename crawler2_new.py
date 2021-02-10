@@ -44,8 +44,8 @@ def write2file():
 ############################################################
 while 1:
     cnt = 0
-    options = driver.find_elements_by_tag_name('select')[0].find_elements_by_tag_name('option')
     time.sleep(6)
+    options = driver.find_elements_by_tag_name('select')[0].find_elements_by_tag_name('option')
     for opt in options:
         try:
             if (opt.get_attribute('value')!= ''):
