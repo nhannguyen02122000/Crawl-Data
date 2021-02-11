@@ -19,7 +19,7 @@ print("INITIALIZE ...")
 f = open("/Users/nhannguyen/Documents/Crawl-Data/lastPage1.txt", "r")
 fromPage = int(f.read())+1
 amountToCrawl = int(sys.argv[1])
-toPage = fromPage + amountToCrawl
+toPage = fromPage + amountToCrawl -1
 url = "https://materialsforleed.ecomedes.com/?query="
 driver = webdriver.Chrome(
             options=chrome_options, executable_path="/Users/nhannguyen/Documents/CRAWL-DATA/chromedriver")
