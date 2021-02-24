@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
 import time
 import sys
 import argparse
@@ -12,6 +13,7 @@ chrome_options = Options()
 #chrome_options.add_argument("--headless")
 chrome_options.add_argument('log-level=3')
 
+TIME_OUT=20
 lastPagePath = "lastPage4.txt"
 chromePath = "chromedriver.exe"
 savePath = "out4\out4_from"
@@ -51,6 +53,7 @@ def write2file():
 ################################################################
 def initBusyWait():
     isWait = True
+    cnt = 0
     while isWait:
         try:
             if driver.find_elements_by_css_selector('.main-app .preloader-block')[0].get_attribute('hidden'):
@@ -59,6 +62,8 @@ def initBusyWait():
                 isWait = True
         except:
                 isWait = True
+        finally:
+            cnt +=1
 ################################################################
 ### GET NEXT ITEMS
 ################################################################
@@ -93,8 +98,20 @@ def crawlingPage(i):
         listPro = driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')[12*(i-1):12*i]
     for pro in listPro:
         url = pro.find_element_by_css_selector('.info-container-ttl>a').get_attribute('href')
-        driver.execute_script("window.open('" + url + "');")
-        driver.switch_to.window(driver.window_handles[1])
+        driver.set_page_load_timeout(TIME_OUT)
+
+        gotLink = False
+        while not gotLink:
+            try:
+                driver.execute_script("window.open('');")
+                driver.switch_to.window(driver.window_handles[1])
+                driver.get(url)
+                gotLink = True
+            except TimeoutException:
+                driver.execute_script("window.stop();")
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
+
         initBusyWait()
         table = {}
 
@@ -148,8 +165,16 @@ def crawlingPage(i):
 ### MAIN
 ################################################################
 print("GET LINK ...")
-driver.get(url)
-print("INIT ...")
+driver.set_page_load_timeout(TIME_OUT)
+gotLink = False
+while not gotLink:
+    try:
+        driver.get(url)
+        gotLink = True
+        print("GET LINK SUCCESSFUL")
+    except TimeoutException:
+        driver.execute_script("window.stop();")
+print("INIT BUSY WAIT...")
 initBusyWait()
 time.sleep(5)
 #JUMP
