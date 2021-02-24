@@ -9,7 +9,7 @@ import json
 import selenium.common.exceptions
 import os
 chrome_options = Options()
-chrome_options.add_argument("--headless")
+#chrome_options.add_argument("--headless")
 chrome_options.add_argument('log-level=3')
 
 lastPagePath = "lastPage4.txt"
@@ -80,7 +80,7 @@ def getNextItems(i):
                 isWait = True
         except:
                 isWait = True
-    if i<3:
+    if i>=0:
         print("Number of products on page: ",len(driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')))
 ################################################################
 ### CRAWLING
@@ -89,7 +89,7 @@ def crawlingPage(i):
     listPro = driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')[12*(i-1):12*i]
     while len(listPro)==0:
         print("Number of products: ",len(driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')), "Expected: " + str(fromPage*12))
-        getNextItems(3)
+        getNextItems(-1)
         listPro = driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')[12*(i-1):12*i]
     for pro in listPro:
         url = pro.find_element_by_css_selector('.info-container-ttl>a').get_attribute('href')
