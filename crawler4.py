@@ -12,9 +12,9 @@ chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument('log-level=3')
 
-lastPagePath = "/Users/nhannguyen/Documents/Crawl-Data/lastPage4.txt"
-chromePath = "/Users/nhannguyen/Documents/crawlerFB/chromedriver"
-savePath = "/Users/nhannguyen/Documents/CRAWL-DATA/out4_from"
+lastPagePath = "lastPage4.txt"
+chromePath = "chromedriver.exe"
+savePath = "out4\out4_from"
 url = "https://spot.ul.com/main-app/products/catalog/?keywords=LEED"
 driver = webdriver.Chrome(options=chrome_options, executable_path=chromePath)
 ################################################################
@@ -71,7 +71,6 @@ def getNextItems(i):
     else:
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         driver.execute_script("document.querySelector('.scroll-top-element').click()")
-        time.sleep(1)
     isWait = True
     while isWait:
         try:
@@ -81,12 +80,17 @@ def getNextItems(i):
                 isWait = True
         except:
                 isWait = True
-    print("Number of products on page: ",len(driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')))
+    if i<3:
+        print("Number of products on page: ",len(driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')))
 ################################################################
 ### CRAWLING
 ################################################################
 def crawlingPage(i):
     listPro = driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')[12*(i-1):12*i]
+    while len(listPro)==0:
+        print("Number of products: ",len(driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')), "Expected: " + str(fromPage*12))
+        getNextItems(3)
+        listPro = driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')[12*(i-1):12*i]
     for pro in listPro:
         url = pro.find_element_by_css_selector('.info-container-ttl>a').get_attribute('href')
         driver.execute_script("window.open('" + url + "');")
@@ -150,6 +154,7 @@ initBusyWait()
 time.sleep(5)
 #JUMP
 print("JUMPING TO PAGE "+ str(fromPage))
+print("Expected products: "+ str(fromPage*12))
 for i in range(1,fromPage):
     getNextItems(i)
 
