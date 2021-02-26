@@ -71,16 +71,16 @@ def getNextItems(i):
     else:
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
         driver.execute_script("document.querySelector('.scroll-top-element').click()")
-        time.sleep(1)
-    isWait = True
-    while isWait:
-        try:
-            if driver.find_elements_by_css_selector('.main-app .preloader-block')[1].get_attribute('hidden'):
-                isWait = False
-            else:
-                isWait = True
-        except:
-                isWait = True
+    time.sleep(1)
+    # isWait = True
+    # while isWait:
+    #     try:
+    #         if driver.find_elements_by_css_selector('.main-app .preloader-block')[1].get_attribute('hidden'):
+    #             isWait = False
+    #         else:
+    #             isWait = True
+    #     except:
+    #             isWait = True
     print("Number of products on page: ",len(driver.find_element_by_css_selector('.results-and-filters .results').find_elements_by_css_selector('.row > .card-container')))
 ################################################################
 ### CRAWLING
